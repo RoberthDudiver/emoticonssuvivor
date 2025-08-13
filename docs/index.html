@@ -2,12 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Stick Survivors — Mobile + Ulti</title>
   <style>
     :root{ --bg:#0b0f1a; --panel:#121829; --text:#e5ecff; --accent:#7c9cff; --good:#79ffa1; --bad:#ff6b6b; }
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:radial-gradient(1200px 820px at 70% -10%,#17213f 0%,#0b0f1a 55%,#05070e 100%);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;color:var(--text)}
+    html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none;background:radial-gradient(1200px 820px at 70% -10%,#17213f 0%,#0b0f1a 55%,#05070e 100%);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;color:var(--text)}
     #wrap{display:grid;grid-template-columns:1fr 360px;gap:14px;max-width:1200px;margin:12px auto;padding:12px}
     #right{background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02));backdrop-filter: blur(6px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
     canvas{width:100%;height:78vh;background:radial-gradient(1000px 700px at 50% 30%,#0e1426 0%,#0a0f1b 50%,#070a12 100%);border-radius:16px;border:1px solid rgba(255,255,255,.08);box-shadow:0 10px 30px rgba(0,0,0,.35);image-rendering:pixelated;touch-action:none}
@@ -33,7 +33,10 @@
     .badge{font-size:10px;text-transform:uppercase;opacity:.85}
 
     /* Mobile controls */
-    #mobile{position:fixed;left:0;right:0;bottom:0;display:none;justify-content:space-between;align-items:flex-end;padding:14px;gap:14px;pointer-events:none;z-index:9}
+    #mobile{$1}
+    #mobile *{touch-action:none}
+    body:has(#mobile){touch-action:none}
+    
     #stickWrap{width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);position:relative;pointer-events:auto}
     #stick{width:64px;height:64px;border-radius:50%;background:rgba(124,156,255,.4);border:2px solid rgba(124,156,255,.8);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}
     #btnMagnet,#btnPauseM{pointer-events:auto;min-width:90px;min-height:90px;border-radius:16px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:var(--text);font-weight:800}
@@ -157,6 +160,8 @@
   window.addEventListener('keyup',e=>onKey(e,false));
 
   // ===== Mobile joystick =====
+  // Evita scroll del documento mientras se usa el joystick
+  window.addEventListener('touchmove', (e)=>{ if(stickActive) e.preventDefault(); }, {passive:false});
   let stickActive=false, stickCX=0, stickCY=0;
   function setStick(e){
     const rect=stickWrap.getBoundingClientRect();
@@ -171,12 +176,12 @@
     K.left = nx < -0.25; K.right = nx > 0.25;
     K.up = ny < -0.25; K.down = ny > 0.25;
   }
-  stickWrap.addEventListener('touchstart',e=>{stickActive=true; setStick(e);},{passive:false});
-  stickWrap.addEventListener('touchmove',e=>{ if(stickActive) setStick(e);},{passive:false});
+  stickWrap.addEventListener('touchstart',e=>{e.preventDefault(); stickActive=true; setStick(e);},{passive:false});
+  stickWrap.addEventListener('touchmove',e=>{ if(stickActive){ e.preventDefault(); setStick(e);} },{passive:false});
   stickWrap.addEventListener('touchend',()=>{stickActive=false; stick.style.transform='translate(-50%,-50%)'; K.left=K.right=K.up=K.down=false;});
-  btnMagnet.addEventListener('touchstart',()=>{K.space=true});
+  btnMagnet.addEventListener('touchstart',e=>{e.preventDefault(); K.space=true});
   btnMagnet.addEventListener('touchend',()=>{K.space=false});
-  btnPauseM.addEventListener('touchstart',()=>togglePause());
+  btnPauseM.addEventListener('touchstart',e=>{e.preventDefault(); togglePause()});
 
   // ===== Tests helpers =====
   const testlog=document.getElementById('testlog');
