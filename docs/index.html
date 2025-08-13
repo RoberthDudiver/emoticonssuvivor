@@ -33,7 +33,7 @@
     .badge{font-size:10px;text-transform:uppercase;opacity:.85}
 
     /* Mobile controls */
-    #mobile{$1}
+    #mobile{position:fixed;left:0;right:0;bottom:0;display:none;justify-content:space-between;align-items:flex-end;padding:14px;gap:14px;pointer-events:none;z-index:9}
     #mobile *{touch-action:none}
     body:has(#mobile){touch-action:none}
     
@@ -137,6 +137,11 @@
   const stick = document.getElementById('stick');
   const btnMagnet = document.getElementById('btnMagnet');
   const btnPauseM = document.getElementById('btnPauseM');
+  const mobileHUD = document.getElementById('mobile');
+  function isTouchDevice(){ return (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window); }
+  function updateMobileUI(){ mobileHUD.style.display = isTouchDevice() ? 'flex' : 'none'; }
+  updateMobileUI();
+  window.addEventListener('resize', updateMobileUI);
 
   const W = canvas.width, H = canvas.height;
   const rand=(a,b)=>Math.random()*(b-a)+a;
@@ -265,10 +270,17 @@
 
   // ===== Armas únicas =====
   function addWeapon(type){
-    if(haveWeapon(type)) return;
-    if(type==='shield') state.weapons.push({name:'Escudo de energía',type:'shield',radius:62,strength:8,phase:0});
-    else if(type==='stunbomb') state.weapons.push({name:'Bomba paralizante',type:'stunbomb',cooldown:2.4,t:0,projSpeed:3.2,explodeRadius:110,stunDuration:2.5,damage:10});
-    else if(type==='bounce') state.weapons.push({name:'Rebote',type:'bounce',fireRate:.30,dmg:6,speed:7.0,spread:.18,last:0,pierce:0,bounces:2,shots:1,color:'#ffe69c'});
+    if(haveWeapon(type) || (type==='smg' && haveWeapon('gun'))) return;
+    if(type==='shield'){
+      state.weapons.push({name:'Escudo de energía',type:'shield',radius:62,strength:8,phase:0});
+    } else if(type==='stunbomb'){
+      state.weapons.push({name:'Bomba paralizante',type:'stunbomb',cooldown:2.4,t:0,projSpeed:3.2,explodeRadius:110,stunDuration:2.5,damage:10});
+    } else if(type==='bounce'){
+      state.weapons.push({name:'Rebote',type:'bounce',fireRate:.30,dmg:6,speed:7.0,spread:.18,last:0,pierce:0,bounces:2,shots:1,color:'#ffe69c'});
+    } else if(type==='smg'){
+      // Ametralladora: se implementa como 'gun' de alta cadencia y bajo daño por bala
+      state.weapons.push({name:'Ametralladora',type:'gun',fireRate:1.4,dmg:2,speed:8.5,spread:.28,last:0,pierce:0,shots:2,color:'#cfe2ff'});
+    }
     renderWeapons();
   }
 
@@ -417,11 +429,14 @@
     state.paused=true; overlay.style.display='flex'; state.lastUpgradeReason = opts.reason || (opts.starter?'starter':null); ovTitle.textContent = opts.starter? 'Elige tu arma inicial' : (opts.reason==='level'?'Subiste de nivel':'Mejora de cofre'); ovBody.innerHTML='';
 
     const choices=[];
+    // armas iniciales (únicas)
     if(!haveWeapon('shield')) choices.push({title:'Arma: Escudo',desc:'Círculo titilante que daña al contacto',apply:()=> addWeapon('shield')});
     if(!haveWeapon('stunbomb')) choices.push({title:'Arma: Bomba paralizante',desc:'💣 late, explota azul, congela y daña',apply:()=> addWeapon('stunbomb')});
     if(!haveWeapon('bounce')) choices.push({title:'Arma: Rebote',desc:'Balas que rebotan en paredes y enemigos',apply:()=> addWeapon('bounce')});
+    if(!haveWeapon('gun')) choices.push({title:'Arma: Ametralladora',desc:'Alta cadencia, bajo daño por bala',apply:()=> addWeapon('smg')});
 
     if(!opts.starter){
+      // upgrades por arma
       if(haveWeapon('shield')) choices.push(
         {title:'Escudo → Radio',desc:'Más área de protección',apply:()=>{ const w=state.weapons.find(x=>x.type==='shield'); w.radius+=10; }},
         {title:'Escudo → Daño',desc:'Más daño por segundo',apply:()=>{ const w=state.weapons.find(x=>x.type==='shield'); w.strength+=2; }}
@@ -437,6 +452,12 @@
         {title:'Rebote → Daño',desc:'Más daño por bala',apply:()=>{ const w=state.weapons.find(x=>x.type==='bounce'); w.dmg++; }},
         {title:'Rebote → Velocidad',desc:'Balas más rápidas',apply:()=>{ const w=state.weapons.find(x=>x.type==='bounce'); w.speed+=0.6; }}
       );
+      if(haveWeapon('gun')) choices.push(
+        {title:'Ametralladora → Cadencia',desc:'Disparas más rápido',apply:()=>{ const w=state.weapons.find(x=>x.type==='gun'); w.fireRate+=0.25; }},
+        {title:'Ametralladora → Daño',desc:'Más daño por bala',apply:()=>{ const w=state.weapons.find(x=>x.type==='gun'); w.dmg+=1; }},
+        {title:'Ametralladora → Balas',desc:'Más balas por ráfaga',apply:()=>{ const w=state.weapons.find(x=>x.type==='gun'); w.shots=(w.shots||1)+1; }},
+        {title:'Ametralladora → Precisión',desc:'Menos spread',apply:()=>{ const w=state.weapons.find(x=>x.type==='gun'); w.spread=Math.max(0.05,(w.spread||0.3)-0.05); }}
+      );
       // generales
       choices.push(
         {title:'Velocidad',desc:'Te mueves más rápido',apply:()=> state.player.speed*=1.08},
@@ -449,7 +470,11 @@
     const subset=shuffled.slice(0,3);
     const grid=document.createElement('div'); grid.style.display='grid'; grid.style.gap='10px';
     subset.forEach(c=>{
-      const btn=document.createElement('button'); btn.className='secondary'; btn.style.textAlign='left'; btn.innerHTML=`<div style="font-weight:800">${c.title}</div><div style="font-size:12px;opacity:.85">${c.desc}</div>`; btn.onclick=()=>{ c.apply(); renderWeapons(); overlay.style.display='none'; state.paused=false; last=performance.now(); requestAnimationFrame(step); }; grid.appendChild(btn);
+      const btn=document.createElement('button');
+      btn.className='secondary'; btn.style.textAlign='left';
+      btn.innerHTML=`<div style="font-weight:800">${c.title}</div><div style="font-size:12px;opacity:.85">${c.desc}</div>`;
+      btn.onclick=()=>{ c.apply(); renderWeapons(); overlay.style.display='none'; state.paused=false; last=performance.now(); requestAnimationFrame(step); };
+      grid.appendChild(btn);
     });
     ovBody.appendChild(grid);
   }
@@ -476,6 +501,8 @@
     addWeapon('bounce'); const en={x:500,y:300,r:14,hp:20,max:20,speed:0.1,type:'small',emoji:'😶',freeze:0}; state.enemies=[en]; state.bullets=[{x:460,y:300,vx:2,vy:0,r:3,dmg:3,bounces:1,pierce:0,life:1,hitCD:0}]; fireAndUpdates(0.2); assert('Rebote dañó', en.hp<20);
     // ulti limpia pantalla
     state.enemies=[{x:200,y:200,r:12,hp:5,max:5,speed:0,emoji:'😶',freeze:0},{x:400,y:400,r:12,hp:5,max:5,speed:0,emoji:'😶',freeze:0}]; triggerUlti(300,300); assert('Ulti limpia', state.enemies.length===0);
+    // smg
+    addWeapon('smg'); const testSMGTarget={x:state.player.x+60,y:state.player.y,r:14,hp:20,max:20,speed:0,type:'small',emoji:'😶',freeze:0}; state.enemies=[testSMGTarget]; const preBullets=state.bullets.length; fireAndUpdates(0.6); assert('SMG dispara/daña', state.bullets.length>preBullets || testSMGTarget.hp<20);
     tlog('Tests OK');
   })();
 })();
