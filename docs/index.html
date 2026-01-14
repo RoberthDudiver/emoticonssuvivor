@@ -86,7 +86,13 @@
     @keyframes pop{ from{ transform: scale(.9); opacity:.35 } to{ transform: scale(1); opacity:1 } }
 
     .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; }
-    @media (max-width: 520px){ .grid{grid-template-columns:1fr;} }
+    @media (max-width: 520px){
+      .grid{grid-template-columns:1fr;}
+      button{ padding:14px 14px; font-size:16px; border-radius:18px; }
+      .card{ padding:16px; }
+      .msgBox{ padding:14px; }
+      .message{ font-size:16px; }
+    }
 
     button{
       appearance:none;
@@ -164,6 +170,41 @@
     }
 
     .floatLayer{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index: 30; }
+
+    /* Burbujitas de charla (modo Isabella) */
+    .bubbleLayer{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index: 31; }
+    .bubble{
+      position:absolute;
+      max-width: min(320px, 78vw);
+      padding:10px 12px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.92);
+      border:1px solid rgba(255,95,162,.22);
+      box-shadow: 0 16px 34px rgba(0,0,0,.12);
+      font-weight: 900;
+      color: rgba(43,43,43,.85);
+      transform: translateY(10px) scale(.98);
+      opacity: 0;
+      animation: bubbleInOut 2.4s ease forwards;
+    }
+    .bubble:after{
+      content:"";
+      position:absolute;
+      left:18px;
+      bottom:-10px;
+      width:18px; height:18px;
+      background: inherit;
+      border-left:1px solid rgba(255,95,162,.18);
+      border-bottom:1px solid rgba(255,95,162,.18);
+      transform: rotate(45deg);
+      border-bottom-left-radius: 6px;
+    }
+    @keyframes bubbleInOut{
+      0%{opacity:0; transform: translateY(14px) scale(.98)}
+      12%{opacity:1; transform: translateY(0) scale(1)}
+      80%{opacity:1}
+      100%{opacity:0; transform: translateY(-10px) scale(.98)}
+    }
     .floatHeart{
       position:absolute;
       width:14px; height:14px;
@@ -214,6 +255,7 @@
 
 <body>
   <div class="floatLayer" id="floatLayer" aria-hidden="true"></div>
+  <div class="bubbleLayer" id="bubbleLayer" aria-hidden="true"></div>
 
   <div class="wrap">
     <div class="app">
@@ -223,8 +265,7 @@
           <div>
             <h1>💖 Juego Kawaii para Isabella</h1>
             <p class="sub">Princesita: tocá frases para armar un mensaje de amor. Cuando completes el corazón… ¡hay sorpresa! ✨</p>
-            <div id="jsStatus" style="margin-top:10px;padding:10px 12px;border-radius:14px;background:rgba(255,95,162,.10);border:1px solid rgba(255,95,162,.20);font-weight:900;color:rgba(43,43,43,.85)">⚠️ Si ves este aviso, el navegador no está ejecutando JavaScript. Abrí este archivo en <b>Chrome</b> (Android) o <b>Safari</b> (iPhone) y no en “Vista previa” de Drive/Archivos.</div>
-          </div>
+</div>
           <div class="badge"><span class="spark"></span> 15 Años</div>
         </div>
 
@@ -243,6 +284,11 @@
 
         <div class="hint">Funciona sin internet. Ideal para abrirlo en el hotel desde el teléfono 🏨</div>
 
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button id="btnFinalInline" class="cta" style="display:none;text-align:center;min-width:180px">✨ Ver final</button>
+          <button id="btnResetInline" class="cta secondary" style="text-align:center;min-width:140px">🔄 Reiniciar</button>
+        </div>
+
         <div class="footer">Hecho con 💗 para Isabella (mi princesita).</div>
       </section>
 
@@ -255,21 +301,21 @@
               Porque tu mamá y yo trabajamos mucho para traerte de Venezuela a Argentina,
               para una vida llena de oportunidades, arte y sueños.
             </p>
-            <div class="ctaRow">
-              <button class="cta" id="btnFinal">✨ Ver final (cuando esté completo)</button>
-              <button class="cta secondary" id="btnReset">🔄 Reiniciar</button>
-            </div>
-          </div>
 
-          <div class="mascotRow" aria-hidden="true">
-            <div class="mascot"><div class="face">👑</div><div class="nameTag">Princesita</div></div>
-            <div class="mascot"><div class="face">🎨</div><div class="nameTag">Arte</div></div>
-            <div class="mascot"><div class="face">💃</div><div class="nameTag">Baile</div></div>
-            <div class="mascot"><div class="face">🔎</div><div class="nameTag">Curiosidad</div></div>
+            <div style="margin-top:12px;padding:12px 12px;border-radius:18px;background:rgba(255,255,255,.70);border:1px solid rgba(0,0,0,.06)">
+              <div style="font-weight:950;margin-bottom:8px">📜 Cómo se juega</div>
+              <div style="display:grid;gap:6px;color:rgba(43,43,43,.78);font-weight:750;line-height:1.35">
+                <div>1) Tocá botones de frases para armar tu mensaje 💗</div>
+                <div>2) Cuando llegues a <b>7 frases</b>, aparece <b>✨ Ver final</b> (abajo)</div>
+                <div>3) Si tocás <b>Zeus ⚡</b> y después <b>Talasofobia 🌊</b>… ¡combo secreto! 😄</div>
+              </div>
+            </div>
+
+            <div class="footer" style="margin-top:12px">Tip: el combo secreto es Zeus ⚡ + Talasofobia 🌊</div>
           </div>
         </div>
 
-        <div class="footer">Secretito: probá tocar “Zeus” y después “Talasofobia” 😉</div>
+        <div class="footer">Modo Isabella: burbujitas 💬 + ocurrencias XD</div>
       </aside>
 
     </div>
@@ -305,6 +351,9 @@
       { emoji:"💎", text:"Tu corazón es enorme" },
       { emoji:"🎨", text:"Amas el arte y lo llevas por dentro" },
       { emoji:"💃", text:"Cuando bailas, el mundo se vuelve más bonito" },
+      { emoji:"🗣️", text:"Hablas hasta por los codos (¡y me encanta!)" },
+      { emoji:"💡", text:"Eres ocurrente: siempre sorprendes" },
+      { emoji:"🪐", text:"Tu imaginación inventa mundos locos" },
       { emoji:"🔎", text:"Te encanta investigar cosas raras y geniales" },
       { emoji:"⚡", text:"Zeus estaría orgulloso de tu curiosidad" },
       { emoji:"🌊", text:"Incluso la talasofobia no te detiene" },
@@ -314,7 +363,7 @@
       { emoji:"🧡", text:"Desde que tenías 4 años" },
       { emoji:"🧭", text:"Caminamos juntos y no nos separamos" },
       { emoji:"🌈", text:"Siempre quiero verte feliz" },
-      { emoji:"🥹", text:"Te amo con todo mi corazón" },
+      { emoji:"🥹", text:"Te amo con todo mi corazón" }
     ];
 
     const FINAL_LINE = "Feliz cumpleaños, hija hermosa. Te amo y espero seguir siendo tu padre para toda la vida.";
@@ -331,8 +380,9 @@
     const overlay = document.getElementById("overlay");
     const finalMsgEl = document.getElementById("finalMsg");
     const floatLayer = document.getElementById("floatLayer");
-    const btnFinal = document.getElementById("btnFinal");
-    const btnReset = document.getElementById("btnReset");
+    const bubbleLayer = document.getElementById("bubbleLayer");
+    const btnFinal = document.getElementById("btnFinalInline");
+    const btnReset = document.getElementById("btnResetInline");
     const btnReset2 = document.getElementById("btnReset2");
     const btnClose = document.getElementById("btnClose");
     const btnCopy = document.getElementById("btnCopy");
@@ -357,6 +407,72 @@
       });
     }
 
+    // --- Soniditos (sin archivos externos) ---
+    let audioCtx = null;
+    function getAudio(){
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      return audioCtx;
+    }
+    function beep({freq=660, dur=0.06, type='sine', gain=0.045, slideTo=null}={}){
+      const ac = getAudio();
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type = type;
+      o.frequency.setValueAtTime(freq, ac.currentTime);
+      if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, ac.currentTime + dur);
+      g.gain.setValueAtTime(0.0001, ac.currentTime);
+      g.gain.exponentialRampToValueAtTime(gain, ac.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + dur);
+      o.connect(g); g.connect(ac.destination);
+      o.start(); o.stop(ac.currentTime + dur);
+    }
+    function popSound(){ beep({freq:520, slideTo:780, dur:0.07, type:'triangle', gain:0.05}); }
+    function sparkleSound(){
+      beep({freq:880, slideTo:1320, dur:0.08, type:'sine', gain:0.04});
+      setTimeout(()=>beep({freq:1320, slideTo:990, dur:0.07, type:'sine', gain:0.03}), 45);
+    }
+
+    function showBubble(text){
+      if (!bubbleLayer) return;
+      const b = document.createElement('div');
+      b.className = 'bubble';
+      b.textContent = text;
+
+      // Posición: alrededor del centro (más "chat")
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const x = Math.max(12, Math.min(w - 340, (w*0.18) + Math.random()*(w*0.64)));
+      const y = Math.max(90, Math.min(h - 220, (h*0.22) + Math.random()*(h*0.30)));
+      b.style.left = x + 'px';
+      b.style.top = y + 'px';
+
+      bubbleLayer.appendChild(b);
+      setTimeout(()=> b.remove(), 2500);
+    }
+
+    const bubblePhrases = [
+      'XD ✨',
+      '¿Y si inventamos un unicornio astronauta? 🦄🚀',
+      'Plot twist: ¡princesita detective! 👑🔎',
+      'Dato random: hoy bailo y brillo 💃🌟',
+      'Modo curiosidad activado 🔎💡',
+      'Yo hablando hasta por los codos… 🗣️😂',
+      '¿Zeus? ok… pero con glitter ⚡✨',
+      'Talasofobia: miedo + valentía = yo 🌊🫶',
+      'Mi cerebro: mil ideas por minuto 🪐💫'
+    ];
+
+    function maybeBubble(trigger){
+      // Más burbujas en frases "de Isabella" y cada 2-3 clicks
+      const t = (trigger || '').toLowerCase();
+      const boost = (t.includes('codos') || t.includes('ocurrente') || t.includes('imaginación') || t.includes('investigar') || t.includes('zeus') || t.includes('talaso'));
+      const chance = boost ? 0.85 : 0.42;
+      if (Math.random() < chance){
+        const pick = bubblePhrases[Math.floor(Math.random()*bubblePhrases.length)];
+        showBubble(pick);
+      }
+    }
+
     function pickPhrase(p, btn){
       if (picked.length >= targetMax) return;
       picked.push(p);
@@ -368,6 +484,8 @@
       messageEl.appendChild(chip);
 
       burstHearts(8);
+      popSound();
+      maybeBubble(p.text);
       updateProgress();
 
       // Secret combo: Zeus + Talasofobia => extra hearts
@@ -375,12 +493,14 @@
       if (texts.some(t=>t.includes("zeus")) && texts.some(t=>t.includes("talaso"))){
         burstHearts(18);
         hintEl.textContent = "¡Combo secreto activado! ⚡🌊 (Isabella investigadora mode) ✨";
+        sparkleSound();
       }
 
       if (picked.length >= targetMin){
         btnFinal.disabled = false;
+        btnFinal.style.display = "inline-block";
         if (!hintEl.textContent.includes("Combo secreto"))
-          hintEl.textContent = "¡Ya casi! Podés seguir agregando… o ver el final ✨";
+          hintEl.textContent = "¡Ya casi! Podés seguir agregando… o tocar ✨ Ver final 💖";
       }
 
       if (picked.length === targetMax){
@@ -403,12 +523,9 @@
       pctEl.textContent = "0%";
       hintEl.textContent = "Tip: tocá 6–8 frases para que quede perfecto 😊";
       btnFinal.disabled = true;
+      btnFinal.style.display = "none";
 
-    // Señal de que JS está corriendo
-    const jsStatus = document.getElementById('jsStatus');
-    if (jsStatus) jsStatus.style.display = 'none';
-
-    renderButtons();
+      renderButtons();
       burstHearts(12);
     }
 
@@ -455,6 +572,7 @@
       }
       finalMsgEl.textContent = buildFinalMessage();
       overlay.classList.add("show");
+      sparkleSound();
       startConfetti();
     }
 
@@ -551,8 +669,12 @@
     overlay.addEventListener("click", (e) => { if (e.target === overlay) closeFinal(); });
 
     btnFinal.disabled = true;
+    btnFinal.style.display = "none";
+
     renderButtons();
     burstHearts(6);
+    // Una burbujita inicial para arrancar kawaii
+    setTimeout(()=>{ try{ showBubble('Holaaa, soy Isabella y tengo 15 😄💗'); }catch(e){} }, 450);
   </script>
 </body>
 </html>
