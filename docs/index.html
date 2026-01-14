@@ -131,7 +131,7 @@
     }
     .poster h2{ margin:0; font-size: clamp(20px, 3.5vw, 28px); letter-spacing:.2px; }
     .poster p{ margin:8px 0 0; color:rgba(43,43,43,.75); line-height:1.4; font-weight:750; }
-    .ctaRow{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+
     .cta{
       flex:1;
       min-width: 140px;
@@ -141,33 +141,6 @@
       font-weight:950;
     }
     .cta.secondary{ background:rgba(255,255,255,.78); border:1px solid rgba(0,0,0,.06); }
-
-    .mascotRow{ display:flex; gap:12px; align-items:flex-end; justify-content:center; padding-top:6px; flex-wrap:wrap; }
-    .mascot{
-      width: 120px; height:120px;
-      border-radius: 30px;
-      background:rgba(255,255,255,.85);
-      border:1px solid rgba(0,0,0,.06);
-      box-shadow: 0 14px 34px rgba(0,0,0,.10);
-      position:relative;
-      overflow:hidden;
-      animation: bob 2.2s ease-in-out infinite;
-    }
-    .mascot:nth-child(2){ animation-delay: .35s }
-    .mascot:nth-child(3){ animation-delay: .7s }
-    .mascot:nth-child(4){ animation-delay: 1.05s }
-    @keyframes bob{ 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-8px) } }
-    .face{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size: 54px; filter: drop-shadow(0 12px 22px rgba(0,0,0,.12)); }
-    .nameTag{
-      position:absolute; left:10px; right:10px; bottom:10px;
-      text-align:center;
-      font-weight:950;
-      padding:6px 10px;
-      border-radius:999px;
-      background:linear-gradient(90deg, rgba(255,95,162,.18), rgba(138,92,255,.14));
-      border:1px solid rgba(255,95,162,.20);
-      font-size: 13px;
-    }
 
     .floatLayer{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index: 30; }
 
@@ -205,6 +178,7 @@
       80%{opacity:1}
       100%{opacity:0; transform: translateY(-10px) scale(.98)}
     }
+
     .floatHeart{
       position:absolute;
       width:14px; height:14px;
@@ -265,7 +239,7 @@
           <div>
             <h1>💖 Juego Kawaii para Isabella</h1>
             <p class="sub">Princesita: tocá frases para armar un mensaje de amor. Cuando completes el corazón… ¡hay sorpresa! ✨</p>
-</div>
+          </div>
           <div class="badge"><span class="spark"></span> 15 Años</div>
         </div>
 
@@ -341,6 +315,7 @@
   <script>
     // Frases kawaii + detalles personales
     const phrases = [
+      // Las frases base (las que me pasaste)
       { emoji:"👑", text:"Mi princesita" },
       { emoji:"✨", text:"Eres mi orgullo" },
       { emoji:"🌷", text:"Tu sonrisa me ilumina" },
@@ -363,7 +338,13 @@
       { emoji:"🧡", text:"Desde que tenías 4 años" },
       { emoji:"🧭", text:"Caminamos juntos y no nos separamos" },
       { emoji:"🌈", text:"Siempre quiero verte feliz" },
-      { emoji:"🥹", text:"Te amo con todo mi corazón" }
+      { emoji:"🥹", text:"Te amo con todo mi corazón" },
+
+      // Extras de Austin & Ally (el recuerdo del carro y la casa 😄)
+      { emoji:"📺", text:"De chiquita amabas Austin & Ally" },
+      { emoji:"🎸", text:"Austin Moon iba contigo en el carro (modo imaginación)" },
+      { emoji:"🚗", text:"Yo: 'Austin, bájate del carro' 😂" },
+      { emoji:"🏠", text:"Y yo lo corría de la casa (en broma) 🤣" }
     ];
 
     const FINAL_LINE = "Feliz cumpleaños, hija hermosa. Te amo y espero seguir siendo tu padre para toda la vida.";
@@ -459,14 +440,31 @@
       'Yo hablando hasta por los codos… 🗣️😂',
       '¿Zeus? ok… pero con glitter ⚡✨',
       'Talasofobia: miedo + valentía = yo 🌊🫶',
-      'Mi cerebro: mil ideas por minuto 🪐💫'
+      'Mi cerebro: mil ideas por minuto 🪐💫',
+      'Austin Moon en el carro… confirmado 😅🎸',
+      'Papá: "Austin, bájate del carro" 🚗🤣',
+      'Yo: "Austin, salga de mi casa" 🏠😂',
+      'Isabella: "Papá, él vive conmigo" 😭💗'
     ];
 
     function maybeBubble(trigger){
-      // Más burbujas en frases "de Isabella" y cada 2-3 clicks
       const t = (trigger || '').toLowerCase();
-      const boost = (t.includes('codos') || t.includes('ocurrente') || t.includes('imaginación') || t.includes('investigar') || t.includes('zeus') || t.includes('talaso'));
-      const chance = boost ? 0.85 : 0.42;
+      const boost = (
+        t.includes('codos') || t.includes('ocurrente') || t.includes('imaginación') ||
+        t.includes('investigar') || t.includes('zeus') || t.includes('talaso') ||
+        t.includes('austin') || t.includes('ally')
+      );
+      const chance = boost ? 0.88 : 0.42;
+
+      // Mini-evento Austin & Ally
+      if (t.includes('austin')){
+        showBubble('🚗 Papá: "Austin, bájate del carro" 😂');
+        setTimeout(()=>showBubble('🎸 Austin Moon: "ok ok" 😅'), 520);
+        burstHearts(10);
+        sparkleSound();
+        return;
+      }
+
       if (Math.random() < chance){
         const pick = bubblePhrases[Math.floor(Math.random()*bubblePhrases.length)];
         showBubble(pick);
@@ -592,6 +590,7 @@
       }
     }
 
+    // Confetti
     const canvas = document.getElementById("confetti");
     const ctx = canvas.getContext("2d");
     let confettiTimer = null;
@@ -616,8 +615,7 @@
         vx: (-1 + Math.random()*2) * 1.3,
         vy: 2.3 + Math.random()*2.8,
         rot: Math.random()*Math.PI,
-        vr: (-1 + Math.random()*2) * 0.07,
-        t: Math.random()
+        vr: (-1 + Math.random()*2) * 0.07
       }));
     }
 
@@ -660,6 +658,21 @@
       window.removeEventListener("resize", resizeCanvas);
     }
 
+    // --- Mini self-tests (no rompen el juego) ---
+    function selfTest(){
+      try{
+        console.assert(Array.isArray(phrases) && phrases.length > 10, 'phrases debería tener varias frases');
+        const s = shuffle([1,2,3,4,5]);
+        console.assert(s.length === 5, 'shuffle debe mantener longitud');
+        picked.length = 0;
+        const msg = buildFinalMessage();
+        console.assert(typeof msg === 'string' && msg.includes('Isabella'), 'buildFinalMessage debe devolver texto');
+      }catch(e){
+        // Silencioso
+      }
+    }
+
+    // Events
     btnFinal.addEventListener("click", showFinal);
     btnReset.addEventListener("click", resetGame);
     btnReset2.addEventListener("click", () => { closeFinal(); resetGame(); });
@@ -668,13 +681,13 @@
 
     overlay.addEventListener("click", (e) => { if (e.target === overlay) closeFinal(); });
 
+    // Init
     btnFinal.disabled = true;
     btnFinal.style.display = "none";
-
     renderButtons();
     burstHearts(6);
-    // Una burbujita inicial para arrancar kawaii
     setTimeout(()=>{ try{ showBubble('Holaaa, soy Isabella y tengo 15 😄💗'); }catch(e){} }, 450);
+    selfTest();
   </script>
 </body>
 </html>
