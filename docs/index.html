@@ -1,762 +1,558 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <title>Prueba de Pastelería y Cocina</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Isabella ✨ 15 Años</title>
   <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f3f4f6;
-      color: #111827;
+    :root{
+      --bg1:#fff7fb;
+      --bg2:#f2fbff;
+      --card:#ffffffcc;
+      --ink:#2b2b2b;
+      --muted:#6b6b6b;
+      --pink:#ff5fa2;
+      --violet:#8a5cff;
+      --mint:#35d6c2;
+      --shadow: 0 18px 50px rgba(0,0,0,.12);
+      --radius: 22px;
     }
-    header {
-      background: #111827;
-      color: #f9fafb;
-      padding: 16px 24px;
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink)}
+    body{
+      background:
+        radial-gradient(1200px 800px at 20% 0%, #ffd7ea 0%, transparent 60%),
+        radial-gradient(1000px 700px at 100% 20%, #d6f4ff 0%, transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
     }
-    header h1 {
-      margin: 0;
-      font-size: 1.4rem;
+    .wrap{ min-height:100%; display:flex; align-items:center; justify-content:center; padding:20px 16px 28px; }
+    .app{ width:min(980px, 100%); display:grid; grid-template-columns: 1.05fr .95fr; gap:16px; }
+    @media (max-width: 860px){ .app{grid-template-columns:1fr; gap:14px;} }
+
+    .card{
+      background:var(--card);
+      border:1px solid rgba(255,255,255,.55);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
     }
-    header p {
-      margin: 4px 0 0;
-      font-size: 0.9rem;
-      opacity: 0.85;
+
+    .titleRow{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px; }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,95,162,.18), rgba(138,92,255,.16));
+      border:1px solid rgba(255,95,162,.22);
+      font-weight:800;
     }
-    main {
-      max-width: 960px;
-      margin: 0 auto;
-      padding: 16px;
+    .spark{width:12px; height:12px; border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, #fff, #ffd6f0 35%, #ff5fa2 75%, #8a5cff 100%);
+      box-shadow:0 0 18px rgba(255,95,162,.55);
+      animation: pulse 1.5s ease-in-out infinite;
     }
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 16px;
-      align-items: center;
+    @keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.25)} }
+
+    h1{ margin:0; font-size: clamp(22px, 4vw, 34px); letter-spacing:.2px; }
+    .sub{ margin:6px 0 0; color:var(--muted); line-height:1.35; font-size: 14.5px; }
+
+    .progress{ margin-top:14px; display:flex; align-items:center; gap:10px; }
+    .bar{ flex:1; height:10px; background:rgba(0,0,0,.07); border-radius:999px; overflow:hidden; }
+    .bar > i{ display:block; height:100%; width:0%; background:linear-gradient(90deg, var(--pink), var(--violet), var(--mint)); border-radius:999px; transition: width .35s ease; }
+    .pct{ min-width:64px; text-align:right; font-weight:900; color:rgba(43,43,43,.8); }
+
+    .msgBox{ margin-top:14px; padding:16px; border-radius:18px; background:rgba(255,255,255,.85); border:1px dashed rgba(255,95,162,.35); position:relative; }
+    .msgBox .label{ display:flex; align-items:center; gap:8px; font-weight:950; margin-bottom:10px; color:rgba(43,43,43,.9); }
+    .msgBox .label .heart{ width:14px; height:14px; transform: rotate(45deg); background:linear-gradient(135deg, var(--pink), var(--violet)); border-radius:4px; position:relative; }
+    .msgBox .label .heart:before,
+    .msgBox .label .heart:after{ content:""; position:absolute; width:14px; height:14px; background:inherit; border-radius:50%; top:-7px; left:0; }
+    .msgBox .label .heart:after{ left:-7px; top:0; }
+
+    .message{ min-height:92px; font-size: 16px; line-height: 1.5; margin:0; word-break: break-word; }
+    .message .chip{
+      display:inline-block;
+      margin:4px 6px 0 0;
+      padding:6px 10px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,95,162,.16), rgba(138,92,255,.12));
+      border:1px solid rgba(255,95,162,.22);
+      animation: pop .26s ease-out;
+      font-weight:800;
     }
-    button {
-      border: none;
-      border-radius: 999px;
-      padding: 8px 16px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      background: #4f46e5;
-      color: white;
-      transition: transform 0.05s ease, box-shadow 0.05s ease, background 0.2s ease;
-      box-shadow: 0 4px 10px rgba(79,70,229,0.35);
+    @keyframes pop{ from{ transform: scale(.9); opacity:.35 } to{ transform: scale(1); opacity:1 } }
+
+    .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; }
+    @media (max-width: 520px){ .grid{grid-template-columns:1fr;} }
+
+    button{
+      appearance:none;
+      border:0;
+      width:100%;
+      text-align:left;
+      padding:12px 12px;
+      border-radius:16px;
+      background:rgba(255,255,255,.86);
+      border:1px solid rgba(0,0,0,.06);
+      box-shadow: 0 10px 22px rgba(0,0,0,.06);
+      color:var(--ink);
+      font-weight:900;
+      cursor:pointer;
+      transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+      position:relative;
+      overflow:hidden;
     }
-    button.secondary {
-      background: #e5e7eb;
-      color: #111827;
-      box-shadow: none;
+    button:active{ transform: translateY(1px) scale(.99); }
+    button:hover{ box-shadow: 0 14px 28px rgba(0,0,0,.08); }
+    button[disabled]{ opacity:.45; cursor:not-allowed; }
+
+    .kemoji{font-size:18px; margin-right:8px}
+    .hint{ margin-top:10px; font-size: 13px; color: var(--muted); }
+
+    .scene{ height:100%; min-height: 420px; display:flex; flex-direction:column; justify-content:space-between; position:relative; }
+    .big{ display:grid; gap:10px; align-content:start; }
+    .poster{
+      border-radius: 22px;
+      padding:16px;
+      background:linear-gradient(135deg, rgba(255,95,162,.20), rgba(138,92,255,.14), rgba(53,214,194,.12));
+      border:1px solid rgba(255,255,255,.55);
+      box-shadow: 0 18px 50px rgba(0,0,0,.10);
+      position:relative;
+      overflow:hidden;
     }
-    button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(79,70,229,0.4);
+    .poster h2{ margin:0; font-size: clamp(20px, 3.5vw, 28px); letter-spacing:.2px; }
+    .poster p{ margin:8px 0 0; color:rgba(43,43,43,.75); line-height:1.4; font-weight:750; }
+    .ctaRow{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+    .cta{
+      flex:1;
+      min-width: 140px;
+      text-align:center;
+      background:linear-gradient(90deg, rgba(255,95,162,.22), rgba(138,92,255,.20));
+      border:1px solid rgba(255,95,162,.25);
+      font-weight:950;
     }
-    button:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(79,70,229,0.3);
+    .cta.secondary{ background:rgba(255,255,255,.78); border:1px solid rgba(0,0,0,.06); }
+
+    .mascotRow{ display:flex; gap:12px; align-items:flex-end; justify-content:center; padding-top:6px; flex-wrap:wrap; }
+    .mascot{
+      width: 120px; height:120px;
+      border-radius: 30px;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(0,0,0,.06);
+      box-shadow: 0 14px 34px rgba(0,0,0,.10);
+      position:relative;
+      overflow:hidden;
+      animation: bob 2.2s ease-in-out infinite;
     }
-    .meta {
-      font-size: 0.85rem;
-      color: #4b5563;
+    .mascot:nth-child(2){ animation-delay: .35s }
+    .mascot:nth-child(3){ animation-delay: .7s }
+    .mascot:nth-child(4){ animation-delay: 1.05s }
+    @keyframes bob{ 0%,100%{ transform: translateY(0) } 50%{ transform: translateY(-8px) } }
+    .face{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size: 54px; filter: drop-shadow(0 12px 22px rgba(0,0,0,.12)); }
+    .nameTag{
+      position:absolute; left:10px; right:10px; bottom:10px;
+      text-align:center;
+      font-weight:950;
+      padding:6px 10px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,95,162,.18), rgba(138,92,255,.14));
+      border:1px solid rgba(255,95,162,.20);
+      font-size: 13px;
     }
-    .question-card {
-      background: white;
-      border-radius: 16px;
-      padding: 16px 18px;
-      margin-bottom: 12px;
-      box-shadow: 0 1px 4px rgba(15,23,42,0.08);
-      border-left: 4px solid transparent;
+
+    .floatLayer{ position:fixed; inset:0; pointer-events:none; overflow:hidden; z-index: 30; }
+    .floatHeart{
+      position:absolute;
+      width:14px; height:14px;
+      transform: rotate(45deg);
+      background:linear-gradient(135deg, var(--pink), var(--violet));
+      border-radius:4px;
+      opacity:.9;
+      filter: drop-shadow(0 10px 16px rgba(255,95,162,.25));
+      animation: floatUp linear forwards;
     }
-    .question-title {
-      font-weight: 600;
-      margin-bottom: 8px;
+    .floatHeart:before, .floatHeart:after{ content:""; position:absolute; width:14px; height:14px; background:inherit; border-radius:50%; top:-7px; left:0; }
+    .floatHeart:after{ left:-7px; top:0; }
+    @keyframes floatUp{
+      from{ transform: translateY(0) rotate(45deg) scale(.95); opacity:.0 }
+      10%{ opacity:.9 }
+      to{ transform: translateY(-120vh) rotate(45deg) scale(1.25); opacity:0 }
     }
-    .options {
-      display: grid;
-      gap: 6px;
-      margin-top: 4px;
+
+    .overlay{
+      position:fixed; inset:0;
+      display:none;
+      align-items:center; justify-content:center;
+      background: rgba(20, 12, 22, .45);
+      z-index: 40;
+      padding: 18px;
     }
-    .option-label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 6px 8px;
-      border-radius: 999px;
-      cursor: pointer;
-      transition: background 0.15s ease, transform 0.05s ease;
+    .overlay.show{ display:flex; }
+    .finalCard{
+      width:min(720px, 100%);
+      background: rgba(255,255,255,.92);
+      border:1px solid rgba(255,255,255,.55);
+      border-radius: 26px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.22);
+      overflow:hidden;
+      position:relative;
     }
-    .option-label:hover {
-      background: #f3f4ff;
-      transform: translateY(-1px);
-    }
-    .option-label input {
-      accent-color: #4f46e5;
-    }
-    .question-card.correct {
-      border-left-color: #16a34a;
-      background: #ecfdf3;
-    }
-    .question-card.incorrect {
-      border-left-color: #dc2626;
-      background: #fef2f2;
-    }
-    .feedback {
-      margin-top: 4px;
-      font-size: 0.8rem;
-      color: #374151;
-    }
-    #results {
-      margin-top: 16px;
-      padding: 12px 14px;
-      border-radius: 12px;
-      background: #111827;
-      color: #f9fafb;
-      font-size: 0.9rem;
-      display: none;
-    }
-    #results span {
-      font-weight: 600;
-    }
-    @media (max-width: 640px) {
-      main { padding: 12px; }
-      .question-card { padding: 12px 14px; }
-    }
+    .finalTop{ padding:18px 18px 10px; background: linear-gradient(135deg, rgba(255,95,162,.22), rgba(138,92,255,.18), rgba(53,214,194,.14)); }
+    .finalTop h3{ margin:0; font-size: clamp(20px, 4vw, 30px); }
+    .finalBody{ padding:16px 18px 18px; }
+    .finalMsg{ margin:0; font-size: 18px; line-height: 1.55; font-weight: 800; }
+    .finalBtns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:14px; }
+    .finalBtns button{ text-align:center; font-weight:980; }
+    canvas#confetti{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+
+    .footer{ text-align:center; font-size:12.5px; color:rgba(43,43,43,.55); margin-top:10px; }
   </style>
 </head>
+
 <body>
-  <header>
-    <h1>Prueba de Pastelería & Cocina</h1>
-    <p>Banco de preguntas de tus apuntes. Cada prueba usa hasta 40 preguntas al azar, sin repetir.</p>
-  </header>
-  <main>
-    <section class="controls">
-      <button id="newQuizBtn">Nuevo examen (40 preguntas)</button>
-      <button id="submitBtn" class="secondary">Corregir respuestas</button>
-      <div class="meta" id="metaInfo"></div>
-    </section>
+  <div class="floatLayer" id="floatLayer" aria-hidden="true"></div>
 
-    <section id="quizContainer"></section>
+  <div class="wrap">
+    <div class="app">
 
-    <section id="results"></section>
-  </main>
+      <section class="card" id="gameCard">
+        <div class="titleRow">
+          <div>
+            <h1>💖 Juego Kawaii para Isabella</h1>
+            <p class="sub">Princesita: tocá frases para armar un mensaje de amor. Cuando completes el corazón… ¡hay sorpresa! ✨</p>
+            <div id="jsStatus" style="margin-top:10px;padding:10px 12px;border-radius:14px;background:rgba(255,95,162,.10);border:1px solid rgba(255,95,162,.20);font-weight:900;color:rgba(43,43,43,.85)">⚠️ Si ves este aviso, el navegador no está ejecutando JavaScript. Abrí este archivo en <b>Chrome</b> (Android) o <b>Safari</b> (iPhone) y no en “Vista previa” de Drive/Archivos.</div>
+          </div>
+          <div class="badge"><span class="spark"></span> 15 Años</div>
+        </div>
+
+        <div class="progress" aria-label="Progreso">
+          <div class="bar"><i id="barFill"></i></div>
+          <div class="pct" id="pct">0%</div>
+        </div>
+
+        <div class="msgBox">
+          <div class="label"><span class="heart"></span> Tu mensaje se arma así:</div>
+          <p class="message" id="message"></p>
+          <div class="hint" id="hint">Tip: tocá 6–8 frases para que quede perfecto 😊</div>
+        </div>
+
+        <div class="grid" id="buttons"></div>
+
+        <div class="hint">Funciona sin internet. Ideal para abrirlo en el hotel desde el teléfono 🏨</div>
+
+        <div class="footer">Hecho con 💗 para Isabella (mi princesita).</div>
+      </section>
+
+      <aside class="card scene">
+        <div class="big">
+          <div class="poster">
+            <h2>🌸 Isabella, mi princesita 🌸</h2>
+            <p>
+              Este jueguito es un regalo chiquito, pero con un mensaje gigante.
+              Porque tu mamá y yo trabajamos mucho para traerte de Venezuela a Argentina,
+              para una vida llena de oportunidades, arte y sueños.
+            </p>
+            <div class="ctaRow">
+              <button class="cta" id="btnFinal">✨ Ver final (cuando esté completo)</button>
+              <button class="cta secondary" id="btnReset">🔄 Reiniciar</button>
+            </div>
+          </div>
+
+          <div class="mascotRow" aria-hidden="true">
+            <div class="mascot"><div class="face">👑</div><div class="nameTag">Princesita</div></div>
+            <div class="mascot"><div class="face">🎨</div><div class="nameTag">Arte</div></div>
+            <div class="mascot"><div class="face">💃</div><div class="nameTag">Baile</div></div>
+            <div class="mascot"><div class="face">🔎</div><div class="nameTag">Curiosidad</div></div>
+          </div>
+        </div>
+
+        <div class="footer">Secretito: probá tocar “Zeus” y después “Talasofobia” 😉</div>
+      </aside>
+
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Mensaje final">
+    <div class="finalCard">
+      <canvas id="confetti"></canvas>
+      <div class="finalTop">
+        <h3>🎉 ¡Feliz cumpleaños, Isabella! 🎉</h3>
+      </div>
+      <div class="finalBody">
+        <p class="finalMsg" id="finalMsg"></p>
+        <div class="finalBtns">
+          <button id="btnCopy">📋 Copiar mensaje</button>
+          <button id="btnClose" class="cta secondary">Cerrar</button>
+          <button id="btnReset2" class="cta secondary">Reiniciar</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // === BANCO DE PREGUNTAS ===
-    // Puedes editar, agregar o borrar preguntas.
-    // Estructura: { question: "...", options: ["A","B","C","D"], correct: índiceCorrecto }
-
-    const QUESTIONS = [
-      {
-        question: "¿Cuándo se forma el gluten en la harina de trigo?",
-        options: [
-          "Cuando se mezcla con agua y se amasa",
-          "Cuando se hornea la masa",
-          "Cuando se agrega azúcar",
-          "Al enfriar en la heladera"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué harina se denomina 'de fuerza'?",
-        options: [
-          "La que tiene más proteínas y desarrolla más gluten",
-          "La que tiene más almidón",
-          "La que tiene menos gluten",
-          "La integral de centeno"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué harina eligen los pasteleros para preparaciones finas?",
-        options: [
-          "0000, muy refinada y de textura fina",
-          "000, gruesa y con mucho gluten",
-          "Harina integral",
-          "Harina de maíz"
-        ],
-        correct: 0
-      },
-      {
-        question: "Freír es…",
-        options: [
-          "Cocinar en grasa caliente con el alimento sumergido",
-          "Cocinar al vapor",
-          "Cocinar en agua a baja temperatura",
-          "Cocinar sin materia grasa"
-        ],
-        correct: 0
-      },
-      {
-        question: "Confit ar consiste en…",
-        options: [
-          "Cocinar en grasa a baja temperatura durante tiempo prolongado",
-          "Cocinar con poco aceite a fuego fuerte",
-          "Cocinar en agua hirviendo",
-          "Cocinar en horno seco a alta temperatura"
-        ],
-        correct: 0
-      },
-      {
-        question: "Sudar (en cocina) significa…",
-        options: [
-          "Cocinar sin dorar para ablandar el alimento",
-          "Cocinar a la parrilla",
-          "Hervir a borbotones",
-          "Flambear con alcohol"
-        ],
-        correct: 0
-      },
-      {
-        question: "Asar es…",
-        options: [
-          "Cocinar con calor directo",
-          "Cocinar al baño María",
-          "Cocinar en fritura profunda",
-          "Cocinar al vapor"
-        ],
-        correct: 0
-      },
-      {
-        question: "Hornear es…",
-        options: [
-          "Cocinar con calor seco, sin líquido y generalmente sin grasas",
-          "Cocinar en agua hirviendo",
-          "Cocinar en aceite profundo",
-          "Cocinar en olla a presión"
-        ],
-        correct: 0
-      },
-      {
-        question: "Método de cocción por concentración:",
-        options: [
-          "Conserva sabores y nutrientes dentro del alimento usando calor alto",
-          "Extrae sabores al líquido usando calor bajo",
-          "Mezcla cocción en seco y en medio líquido",
-          "Solo se usa para verduras de hoja"
-        ],
-        correct: 0
-      },
-      {
-        question: "Método de cocción por extracción:",
-        options: [
-          "Saca sabores y nutrientes hacia el líquido de cocción",
-          "Conserva todo dentro del alimento",
-          "Solo aplica a frituras",
-          "Solo se usa en pastelería"
-        ],
-        correct: 0
-      },
-      {
-        question: "Método de cocción mixto:",
-        options: [
-          "Combina concentración y extracción en una misma preparación",
-          "Es igual a hervir",
-          "Es igual a freír",
-          "Solo se hace en microondas"
-        ],
-        correct: 0
-      },
-      {
-        question: "Corte en juliana se describe como…",
-        options: [
-          "Tiras finas y largas de 2 mm aprox.",
-          "Cubos pequeños de 3 mm",
-          "Láminas muy finas de hoja",
-          "Cubos grandes de 2 cm"
-        ],
-        correct: 0
-      },
-      {
-        question: "El corte brunoise es…",
-        options: [
-          "Dados pequeños y regulares",
-          "Tiras largas",
-          "Rebanadas gruesas",
-          "Rodajas diagonales"
-        ],
-        correct: 0
-      },
-      {
-        question: "En un batido liviano para pionono, la relación por huevo suele ser…",
-        options: [
-          "1 huevo : 20 g azúcar : 20 g harina",
-          "1 huevo : 10 g azúcar : 10 g harina",
-          "1 huevo : 40 g azúcar : 40 g harina",
-          "1 huevo : 60 g azúcar : 60 g harina"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué es una masa quebrada?",
-        options: [
-          "Masa crujiente con harina, manteca, poca agua y poco amasado",
-          "Masa muy hidratada y elástica",
-          "Masa hojaldrada por laminado",
-          "Masa batida liviana"
-        ],
-        correct: 0
-      },
-      {
-        question: "Una característica importante de la masa quebrada es…",
-        options: [
-          "Baja elasticidad y poco desarrollo de gluten",
-          "Altísima elasticidad",
-          "Gran volumen alveolado",
-          "Se trabaja siempre caliente"
-        ],
-        correct: 0
-      },
-      {
-        question: "Relación clara/azúcar típica para merengue (base):",
-        options: [
-          "1 parte de claras : 2 partes de azúcar",
-          "1 parte de claras : 1 parte de azúcar",
-          "2 partes de claras : 1 parte de azúcar",
-          "1 parte de claras : 3 partes de azúcar"
-        ],
-        correct: 0
-      },
-      {
-        question: "El merengue francés se caracteriza por…",
-        options: [
-          "Batido en frío, rápido y simple",
-          "Batido a baño María",
-          "Agregar almíbar caliente",
-          "No lleva azúcar"
-        ],
-        correct: 0
-      },
-      {
-        question: "El merengue suizo se realiza…",
-        options: [
-          "Batiento claras y azúcar a baño María hasta 50–60 °C",
-          "Solo en frío",
-          "Con almíbar a 121 °C",
-          "En horno muy caliente"
-        ],
-        correct: 0
-      },
-      {
-        question: "El merengue italiano se prepara…",
-        options: [
-          "Agregando almíbar caliente (118–121 °C) sobre las claras batidas",
-          "Solo batiendo claras con azúcar en frío",
-          "Solo con azúcar impalpable",
-          "En baño María sin almíbar"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué función cumple el azúcar en un merengue?",
-        options: [
-          "Estabiliza las claras y aporta volumen y textura",
-          "Solo endulza, nada más",
-          "Solo cambia el color",
-          "Baja el punto de cocción del huevo"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿A qué temperatura aproximada muere la levadura por completo?",
-        options: [
-          "55–60 °C",
-          "20–25 °C",
-          "10 °C",
-          "30–35 °C"
-        ],
-        correct: 0
-      },
-      {
-        question: "Temperatura ideal para el desarrollo de levadura en panificación",
-        options: [
-          "24–28 °C",
-          "0–4 °C",
-          "40–45 °C",
-          "60–70 °C"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué es la levadura en términos biológicos?",
-        options: [
-          "Un hongo unicelular vivo",
-          "Un mineral",
-          "Una bacteria láctica",
-          "Un alga verde"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Cuántos tipos básicos de levadura de panadería se usan comúnmente?",
-        options: [
-          "Dos: fresca y seca",
-          "Solo una: seca",
-          "Tres: fresca, seca e instantánea (no, es forma de seca)",
-          "Ninguna, solo masa madre"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué ingrediente determina que una masa quebrada sea pesada, media o liviana?",
-        options: [
-          "La proporción de materia grasa",
-          "La cantidad de agua",
-          "El tipo de harina",
-          "La sal"
-        ],
-        correct: 0
-      },
-      {
-        question: "Máximo de polvo de hornear recomendado en un batido pesado (respecto al peso total)",
-        options: [
-          "Hasta alrededor del 3 %",
-          "Hasta 10 %",
-          "No tiene límite",
-          "Solo 0,1 %"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué significa nacarar el arroz de un risotto?",
-        options: [
-          "Sofreír ligeramente el arroz sin dorar",
-          "Hervir el arroz en abundante agua",
-          "Tostar el arroz hasta que quede marrón",
-          "Remojar el arroz en agua fría"
-        ],
-        correct: 0
-      },
-      {
-        question: "En masas de facturas con hojaldre de levadura, un esquema clásico de vueltas es…",
-        options: [
-          "3 vueltas simples + 1 doble",
-          "1 sola vuelta",
-          "10 vueltas simples",
-          "Sin vueltas, solo amasado"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué es un roux?",
-        options: [
-          "Mezcla cocida de harina y materia grasa",
-          "Mezcla de leche y huevo",
-          "Batido de claras y azúcar",
-          "Reducción de vino tinto"
-        ],
-        correct: 0
-      },
-      {
-        question: "Proporción clásica para un roux estándar es…",
-        options: [
-          "Cantidad igual de harina y manteca",
-          "Doble de harina que manteca",
-          "Solo harina sin grasa",
-          "Solo grasa sin harina"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué combinación de temperaturas ayuda a evitar grumos al ligar con roux?",
-        options: [
-          "Líquido caliente con roux frío o líquido frío con roux caliente",
-          "Ambos muy fríos",
-          "Ambos muy calientes siempre",
-          "No importa, nunca hace grumos"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué es un soufflé?",
-        options: [
-          "Preparación dulce o salada con base aireada, generalmente claras batidas",
-          "Una masa quebrada",
-          "Un tipo de merengue",
-          "Una salsa fría"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué es una duxelle?",
-        options: [
-          "Picado de champiñones con cebolla y manteca, usado como relleno o base",
-          "Un tipo de salsa fría de tomate",
-          "Un corte de carne vacuna",
-          "Una masa hojaldrada"
-        ],
-        correct: 0
-      },
-      {
-        question: "En una crema inglesa…",
-        options: [
-          "No lleva almidón y se cocina a 82–85 °C",
-          "Lleva mucha maicena",
-          "Se cocina hasta hervir fuerte",
-          "Se hornea en moldes"
-        ],
-        correct: 0
-      },
-      {
-        question: "La crema pastelera se diferencia de la inglesa porque…",
-        options: [
-          "Lleva almidón y se cocina hasta espesar",
-          "No lleva azúcar",
-          "No se calienta",
-          "Siempre va al horno al final"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Con qué se espesa la crema pastelera además del huevo?",
-        options: [
-          "Fécula de maíz (maicena)",
-          "Harina leudante",
-          "Gelatina en hojas",
-          "Solo azúcar"
-        ],
-        correct: 0
-      },
-      {
-        question: "Función principal de la gelatina en una preparación fría",
-        options: [
-          "Gelificar y aportar estructura",
-          "Colorear la preparación",
-          "Aportar sabor fuerte",
-          "Aumentar la acidez"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué tipo de proteína es la gelatina?",
-        options: [
-          "Proteína de origen animal derivada del colágeno",
-          "Proteína vegetal de soja",
-          "Proteína láctea",
-          "No es proteína, es azúcar"
-        ],
-        correct: 0
-      },
-      {
-        question: "Ejemplos de cefalópodos son…",
-        options: [
-          "Pulpo y calamar",
-          "Salmón y trucha",
-          "Ostra y mejillón",
-          "Dorado y bagre"
-        ],
-        correct: 0
-      },
-      {
-        question: "Un arroz pilaf bien hecho debe quedar…",
-        options: [
-          "Grano suelto y seco",
-          "Pasado y pegajoso",
-          "Totalmente hecho puré",
-          "Crudo en el centro"
-        ],
-        correct: 0
-      },
-      {
-        question: "Manteca compuesta es…",
-        options: [
-          "Manteca amasada con condimentos y formadas en cilindro",
-          "Manteca clarificada",
-          "Manteca derretida con harina",
-          "Manteca mezclada con azúcar"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Cuál es una forma correcta de descongelar un ave?",
-        options: [
-          "En heladera, en la parte baja, lentamente",
-          "Sobre la mesada todo el día",
-          "Bajo agua caliente",
-          "Directo al horno desde el freezer"
-        ],
-        correct: 0
-      },
-      {
-        question: "En clasificación de pastas, una división básica es…",
-        options: [
-          "Frescas y secas",
-          "Largas y cortas solamente",
-          "Rellenas y sin relleno nada más",
-          "Con huevo y sin agua"
-        ],
-        correct: 0
-      },
-      {
-        question: "¿Qué mecanismo de transferencia de calor se da por contacto directo?",
-        options: [
-          "Conducción",
-          "Convección",
-          "Radiación",
-          "Evaporación"
-        ],
-        correct: 0
-      },
-      {
-        question: "La convección ocurre principalmente en…",
-        options: [
-          "Fluidos como agua o aire en movimiento",
-          "Superficies metálicas sólidas",
-          "Únicamente en vacío",
-          "Solo en hornos de microondas"
-        ],
-        correct: 0
-      },
-      {
-        question: "La radiación es…",
-        options: [
-          "Transferencia de calor mediante energía radiante",
-          "Transferencia por contacto directo",
-          "Transferencia química",
-          "Otra forma de nombrar la ebullición"
-        ],
-        correct: 0
-      }
+    // Frases kawaii + detalles personales
+    const phrases = [
+      { emoji:"👑", text:"Mi princesita" },
+      { emoji:"✨", text:"Eres mi orgullo" },
+      { emoji:"🌷", text:"Tu sonrisa me ilumina" },
+      { emoji:"🫶", text:"Gracias por elegirme" },
+      { emoji:"🌟", text:"Eres una luz en mi vida" },
+      { emoji:"🧸", text:"Siempre voy a cuidarte" },
+      { emoji:"🎀", text:"Eres dulce y valiente" },
+      { emoji:"💎", text:"Tu corazón es enorme" },
+      { emoji:"🎨", text:"Amas el arte y lo llevas por dentro" },
+      { emoji:"💃", text:"Cuando bailas, el mundo se vuelve más bonito" },
+      { emoji:"🔎", text:"Te encanta investigar cosas raras y geniales" },
+      { emoji:"⚡", text:"Zeus estaría orgulloso de tu curiosidad" },
+      { emoji:"🌊", text:"Incluso la talasofobia no te detiene" },
+      { emoji:"🇻🇪", text:"De Venezuela trajiste tu fuerza" },
+      { emoji:"🇦🇷", text:"En Argentina estás construyendo tus sueños" },
+      { emoji:"🤍", text:"Tu mamá y yo trabajamos mucho por tu felicidad" },
+      { emoji:"🧡", text:"Desde que tenías 4 años" },
+      { emoji:"🧭", text:"Caminamos juntos y no nos separamos" },
+      { emoji:"🌈", text:"Siempre quiero verte feliz" },
+      { emoji:"🥹", text:"Te amo con todo mi corazón" },
     ];
 
-    // === LÓGICA DE EXAMEN ===
+    const FINAL_LINE = "Feliz cumpleaños, hija hermosa. Te amo y espero seguir siendo tu padre para toda la vida.";
 
-    const MAX_PER_EXAM = 40;
+    const picked = [];
+    const targetMin = 7;
+    const targetMax = 9;
 
-    const quizContainer = document.getElementById("quizContainer");
-    const newQuizBtn = document.getElementById("newQuizBtn");
-    const submitBtn = document.getElementById("submitBtn");
-    const resultsEl = document.getElementById("results");
-    const metaInfo = document.getElementById("metaInfo");
+    const buttonsWrap = document.getElementById("buttons");
+    const messageEl = document.getElementById("message");
+    const barFill = document.getElementById("barFill");
+    const pctEl = document.getElementById("pct");
+    const hintEl = document.getElementById("hint");
+    const overlay = document.getElementById("overlay");
+    const finalMsgEl = document.getElementById("finalMsg");
+    const floatLayer = document.getElementById("floatLayer");
+    const btnFinal = document.getElementById("btnFinal");
+    const btnReset = document.getElementById("btnReset");
+    const btnReset2 = document.getElementById("btnReset2");
+    const btnClose = document.getElementById("btnClose");
+    const btnCopy = document.getElementById("btnCopy");
 
-    let currentExam = [];
-
-    function shuffle(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+    function shuffle(arr){
+      const a = arr.slice();
+      for (let i=a.length-1; i>0; i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
       }
-      return array;
+      return a;
     }
 
-    function prepareQuestion(q) {
-      const indices = q.options.map((_, i) => i);
-      shuffle(indices);
-      const shuffledOptions = indices.map(i => q.options[i]);
-      const newCorrect = indices.indexOf(q.correct);
-      return {
-        question: q.question,
-        options: shuffledOptions,
-        correct: newCorrect
-      };
-    }
-
-    function buildExam() {
-      const pool = QUESTIONS.map(prepareQuestion);
-      shuffle(pool);
-      const count = Math.min(MAX_PER_EXAM, pool.length);
-      currentExam = pool.slice(0, count);
-
-      quizContainer.innerHTML = "";
-      resultsEl.style.display = "none";
-      resultsEl.textContent = "";
-
-      currentExam.forEach((q, idx) => {
-        const card = document.createElement("article");
-        card.className = "question-card";
-        card.dataset.index = idx;
-
-        const title = document.createElement("div");
-        title.className = "question-title";
-        title.textContent = `${idx + 1}. ${q.question}`;
-        card.appendChild(title);
-
-        const optionsWrap = document.createElement("div");
-        optionsWrap.className = "options";
-
-        q.options.forEach((opt, optIdx) => {
-          const label = document.createElement("label");
-          label.className = "option-label";
-
-          const input = document.createElement("input");
-          input.type = "radio";
-          input.name = `q${idx}`;
-          input.value = optIdx;
-
-          const span = document.createElement("span");
-          span.textContent = opt;
-
-          label.appendChild(input);
-          label.appendChild(span);
-          optionsWrap.appendChild(label);
-        });
-
-        const feedback = document.createElement("div");
-        feedback.className = "feedback";
-        feedback.textContent = "";
-
-        card.appendChild(optionsWrap);
-        card.appendChild(feedback);
-
-        quizContainer.appendChild(card);
+    function renderButtons(){
+      buttonsWrap.innerHTML = "";
+      const list = shuffle(phrases);
+      list.forEach((p) => {
+        const b = document.createElement("button");
+        b.innerHTML = `<span class="kemoji">${p.emoji}</span>${p.text}`;
+        b.addEventListener("click", () => pickPhrase(p, b));
+        buttonsWrap.appendChild(b);
       });
-
-      metaInfo.textContent = `Preguntas en esta vuelta: ${currentExam.length} (de un banco total de ${QUESTIONS.length}).`;
     }
 
-    function gradeExam() {
-      if (!currentExam.length) return;
+    function pickPhrase(p, btn){
+      if (picked.length >= targetMax) return;
+      picked.push(p);
+      btn.disabled = true;
 
-      let correctCount = 0;
+      const chip = document.createElement("span");
+      chip.className = "chip";
+      chip.textContent = `${p.emoji} ${p.text}`;
+      messageEl.appendChild(chip);
 
-      const cards = quizContainer.querySelectorAll(".question-card");
-      cards.forEach(card => {
-        card.classList.remove("correct", "incorrect");
-        const idx = parseInt(card.dataset.index, 10);
-        const q = currentExam[idx];
-        const feedback = card.querySelector(".feedback");
+      burstHearts(8);
+      updateProgress();
 
-        const selected = card.querySelector("input[type=radio]:checked");
-        if (!selected) {
-          card.classList.add("incorrect");
-          feedback.textContent = "No respondiste esta pregunta.";
-          return;
-        }
+      // Secret combo: Zeus + Talasofobia => extra hearts
+      const texts = picked.map(x => x.text.toLowerCase());
+      if (texts.some(t=>t.includes("zeus")) && texts.some(t=>t.includes("talaso"))){
+        burstHearts(18);
+        hintEl.textContent = "¡Combo secreto activado! ⚡🌊 (Isabella investigadora mode) ✨";
+      }
 
-        const selectedIdx = parseInt(selected.value, 10);
-        if (selectedIdx === q.correct) {
-          correctCount++;
-          card.classList.add("correct");
-          feedback.textContent = "¡Correcto!";
-        } else {
-          card.classList.add("incorrect");
-          const correctText = q.options[q.correct];
-          feedback.textContent = `Incorrecto. Respuesta correcta: ${correctText}`;
-        }
+      if (picked.length >= targetMin){
+        btnFinal.disabled = false;
+        if (!hintEl.textContent.includes("Combo secreto"))
+          hintEl.textContent = "¡Ya casi! Podés seguir agregando… o ver el final ✨";
+      }
+
+      if (picked.length === targetMax){
+        btnFinal.disabled = false;
+        if (!hintEl.textContent.includes("Combo secreto"))
+          hintEl.textContent = "¡Perfecto! Ahora sí: tocá “Ver final” ✨";
+      }
+    }
+
+    function updateProgress(){
+      const pct = Math.round((picked.length / targetMax) * 100);
+      barFill.style.width = `${pct}%`;
+      pctEl.textContent = `${pct}%`;
+    }
+
+    function resetGame(){
+      picked.length = 0;
+      messageEl.innerHTML = "";
+      barFill.style.width = "0%";
+      pctEl.textContent = "0%";
+      hintEl.textContent = "Tip: tocá 6–8 frases para que quede perfecto 😊";
+      btnFinal.disabled = true;
+
+    // Señal de que JS está corriendo
+    const jsStatus = document.getElementById('jsStatus');
+    if (jsStatus) jsStatus.style.display = 'none';
+
+    renderButtons();
+      burstHearts(12);
+    }
+
+    function burstHearts(n=6){
+      const w = window.innerWidth;
+      for (let i=0;i<n;i++){
+        const h = document.createElement("div");
+        h.className = "floatHeart";
+        const x = Math.random()*w;
+        const dur = 1700 + Math.random()*1600;
+        h.style.left = `${x}px`;
+        h.style.bottom = `-20px`;
+        h.style.animationDuration = `${dur}ms`;
+        h.style.opacity = "0";
+        floatLayer.appendChild(h);
+        setTimeout(()=> h.remove(), dur+50);
+      }
+    }
+
+    function buildFinalMessage(){
+      const parts = picked.map(p => p.text);
+      const hasSince4 = parts.some(t => t.toLowerCase().includes("4"));
+      const hasTogether = parts.some(t => t.toLowerCase().includes("no nos separamos") || t.toLowerCase().includes("caminamos juntos"));
+      const hasVnz = parts.some(t => t.toLowerCase().includes("venezuela"));
+      const hasArg = parts.some(t => t.toLowerCase().includes("argentina"));
+      const intro = "Isabella, mi princesita… ";
+
+      const core = parts.length ? parts.join(". ") + "." : "Quería decirte algo con todo mi corazón.";
+
+      const bridge = [
+        hasVnz && hasArg ? "" : " Tu mamá y yo trabajamos muchísimo para traerte de Venezuela a Argentina y darte una vida mejor.",
+        hasSince4 ? "" : " Desde que tenías 4 años,",
+        hasTogether ? "" : " caminamos juntos y no nos separamos."
+      ].join(" ").replace(/\s+/g," ").trim();
+
+      return `${intro}${core} ${bridge} ${FINAL_LINE}`.replace(/\s+/g," ").trim();
+    }
+
+    function showFinal(){
+      if (picked.length < targetMin){
+        burstHearts(10);
+        hintEl.textContent = "Te falta un poquito 💗 Tocá algunas frases más antes del final ✨";
+        return;
+      }
+      finalMsgEl.textContent = buildFinalMessage();
+      overlay.classList.add("show");
+      startConfetti();
+    }
+
+    function closeFinal(){
+      overlay.classList.remove("show");
+      stopConfetti();
+    }
+
+    async function copyFinal(){
+      try{
+        await navigator.clipboard.writeText(finalMsgEl.textContent);
+        btnCopy.textContent = "✅ ¡Copiado!";
+        setTimeout(()=> btnCopy.textContent="📋 Copiar mensaje", 1400);
+      }catch(e){
+        btnCopy.textContent = "⚠️ No se pudo copiar";
+        setTimeout(()=> btnCopy.textContent="📋 Copiar mensaje", 1400);
+      }
+    }
+
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    let confettiTimer = null;
+    let confettiPieces = [];
+
+    function resizeCanvas(){
+      const card = canvas.parentElement.getBoundingClientRect();
+      canvas.width = Math.floor(card.width * devicePixelRatio);
+      canvas.height = Math.floor(card.height * devicePixelRatio);
+      canvas.style.width = card.width + "px";
+      canvas.style.height = card.height + "px";
+      ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    }
+
+    function makeConfetti(){
+      const rect = canvas.getBoundingClientRect();
+      const count = 140;
+      confettiPieces = Array.from({length:count}, () => ({
+        x: Math.random()*rect.width,
+        y: -20 - Math.random()*rect.height*0.6,
+        r: 3 + Math.random()*4,
+        vx: (-1 + Math.random()*2) * 1.3,
+        vy: 2.3 + Math.random()*2.8,
+        rot: Math.random()*Math.PI,
+        vr: (-1 + Math.random()*2) * 0.07,
+        t: Math.random()
+      }));
+    }
+
+    function drawConfetti(){
+      const rect = canvas.getBoundingClientRect();
+      ctx.clearRect(0,0,rect.width,rect.height);
+      confettiPieces.forEach(p => {
+        p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+        if (p.y > rect.height + 30) { p.y = -20; p.x = Math.random()*rect.width; }
+        if (p.x < -30) p.x = rect.width + 30;
+        if (p.x > rect.width + 30) p.x = -30;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        const g = ctx.createLinearGradient(-p.r, -p.r, p.r, p.r);
+        g.addColorStop(0, "rgba(255,95,162,.95)");
+        g.addColorStop(.5, "rgba(138,92,255,.9)");
+        g.addColorStop(1, "rgba(53,214,194,.9)");
+        ctx.fillStyle = g;
+        ctx.fillRect(-p.r, -p.r, p.r*2.1, p.r*1.3);
+        ctx.restore();
       });
-
-      const total = currentExam.length;
-      const percent = Math.round((correctCount / total) * 100);
-
-      resultsEl.style.display = "block";
-      resultsEl.innerHTML = `
-        Resultado: <span>${correctCount} / ${total}</span> respuestas correctas
-        (${percent}%).<br>
-        Podés generar otro examen aleatorio con el botón "Nuevo examen" para seguir practicando.
-      `;
     }
 
-    newQuizBtn.addEventListener("click", buildExam);
-    submitBtn.addEventListener("click", gradeExam);
+    function startConfetti(){
+      resizeCanvas();
+      makeConfetti();
+      if (confettiTimer) return;
+      confettiTimer = setInterval(drawConfetti, 16);
+      window.addEventListener("resize", resizeCanvas);
+    }
 
-    // Generar un examen al cargar
-    buildExam();
+    function stopConfetti(){
+      if (confettiTimer){
+        clearInterval(confettiTimer);
+        confettiTimer = null;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+      }
+      window.removeEventListener("resize", resizeCanvas);
+    }
+
+    btnFinal.addEventListener("click", showFinal);
+    btnReset.addEventListener("click", resetGame);
+    btnReset2.addEventListener("click", () => { closeFinal(); resetGame(); });
+    btnClose.addEventListener("click", closeFinal);
+    btnCopy.addEventListener("click", copyFinal);
+
+    overlay.addEventListener("click", (e) => { if (e.target === overlay) closeFinal(); });
+
+    btnFinal.disabled = true;
+    renderButtons();
+    burstHearts(6);
   </script>
 </body>
 </html>
