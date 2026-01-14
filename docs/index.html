@@ -85,6 +85,24 @@
     }
     @keyframes pop{ from{ transform: scale(.9); opacity:.35 } to{ transform: scale(1); opacity:1 } }
 
+    .chips{ display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+    .chips .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(255,95,162,.16), rgba(138,92,255,.12));
+      border:1px solid rgba(255,95,162,.22);
+      animation: pop .26s ease-out;
+      font-weight:850;
+      font-size: 13.5px;
+      color: rgba(43,43,43,.86);
+    }
+
+    /* (compat) Si existiera algún chip dentro del párrafo, no se muestra */
+    .message .chip{ display:none; }
+
     .grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:12px; }
     @media (max-width: 520px){
       .grid{grid-template-columns:1fr;}
@@ -251,6 +269,7 @@
         <div class="msgBox">
           <div class="label"><span class="heart"></span> Tu mensaje se arma así:</div>
           <p class="message" id="message"></p>
+          <div id="chips" class="chips" aria-label="Frases elegidas"></div>
           <div class="hint" id="hint">Tip: tocá 6–8 frases para que quede perfecto 😊</div>
         </div>
 
@@ -355,6 +374,7 @@
 
     const buttonsWrap = document.getElementById("buttons");
     const messageEl = document.getElementById("message");
+    const chipsEl = document.getElementById("chips");
     const barFill = document.getElementById("barFill");
     const pctEl = document.getElementById("pct");
     const hintEl = document.getElementById("hint");
@@ -479,7 +499,9 @@
       const chip = document.createElement("span");
       chip.className = "chip";
       chip.textContent = `${p.emoji} ${p.text}`;
-      messageEl.appendChild(chip);
+      chipsEl.appendChild(chip);
+
+      updatePreview();
 
       burstHearts(8);
       popSound();
@@ -516,7 +538,8 @@
 
     function resetGame(){
       picked.length = 0;
-      messageEl.innerHTML = "";
+      messageEl.textContent = "";
+      chipsEl.innerHTML = "";
       barFill.style.width = "0%";
       pctEl.textContent = "0%";
       hintEl.textContent = "Tip: tocá 6–8 frases para que quede perfecto 😊";
@@ -543,23 +566,110 @@
       }
     }
 
+    function squeezeSpaces(str){
+      // sin regex (más robusto para ediciones)
+      let s = (str || "").trim();
+      while (s.includes("  ")) s = s.replace("  ", " ");
+      return s;
+    }
+
+    function normalize(t){ return (t || "").toLowerCase(); }
+
+    function buildParagraph(includeFinal=false){
+      const texts = picked.map(p => p.text);
+      const tset = new Set(texts.map(normalize));
+      const has = (needle) => Array.from(tset).some(x => x.includes(needle));
+
+      const flags = {
+        princesita: has('princesita'),
+        orgullo: has('orgullo'),
+        sonrisa: has('sonrisa'),
+        gracias: has('gracias'),
+        luz: has('luz'),
+        cuidar: has('cuidarte'),
+        dulceValiente: has('dulce') || has('valiente'),
+        corazonEnorme: has('corazón') || has('corazon'),
+        arte: has('arte'),
+        bailar: has('bailas') || has('bailar'),
+        codos: has('codos'),
+        ocurrente: has('ocurrente'),
+        imaginacion: has('imaginación') || has('imaginacion'),
+        investigar: has('investigar') || has('investiga'),
+        zeus: has('zeus'),
+        talaso: has('talaso'),
+        vnz: has('venezuela'),
+        arg: has('argentina'),
+        trabajo: has('trabajamos'),
+        since4: has('4 años') || has('4'),
+        juntos: has('no nos separamos') || has('caminamos juntos'),
+        austin: has('austin') || has('ally')
+      };
+
+      const opener = `Isabella${flags.princesita ? ", mi princesita" : ""}, hoy cumples 15 años y yo sigo con el corazón lleno de amor por ti.`;
+
+      const compliments = [];
+      if (flags.orgullo) compliments.push("Eres mi orgullo");
+      if (flags.luz) compliments.push("eres una luz en mi vida");
+      if (flags.sonrisa) compliments.push("tu sonrisa me ilumina");
+      if (flags.corazonEnorme) compliments.push("tu corazón es enorme");
+      if (flags.dulceValiente) compliments.push("eres dulce y valiente");
+      if (flags.cuidar) compliments.push("siempre voy a cuidarte");
+      if (flags.gracias) compliments.push("gracias por elegirme");
+
+      let line1 = "";
+      if (compliments.length){
+        const first = compliments.slice(0, 2).join(", ");
+        const rest = compliments.slice(2);
+        line1 = rest.length ? `${first}, y ${rest.join(", ")}.` : `${first}.`;
+        line1 = line1.charAt(0).toUpperCase() + line1.slice(1);
+      }
+
+      const likes = [];
+      if (flags.arte) likes.push("amas el arte");
+      if (flags.bailar) likes.push("cuando bailas, el mundo se vuelve más bonito");
+      if (flags.investigar) likes.push("te encanta investigar cosas raras y geniales");
+      if (flags.zeus) likes.push("hasta Zeus estaría orgulloso de tu curiosidad");
+      if (flags.talaso) likes.push("y aunque el mar profundo asuste, tu valentía siempre gana");
+      if (flags.ocurrente) likes.push("eres ocurrente y siempre sorprendes");
+      if (flags.imaginacion) likes.push("tu imaginación inventa mundos locos");
+      if (flags.codos) likes.push("hablas hasta por los codos… y eso me da risa y ternura");
+
+      let line2 = "";
+      if (likes.length){
+        const a = likes.slice(0, 2);
+        const b = likes.slice(2);
+        line2 = `Me encanta que ${a.join(" y ")}`;
+        if (b.length) line2 += `, y también que ${b.join(", ")}`;
+        line2 += ".";
+      }
+
+      let line3 = "";
+      if (flags.vnz || flags.arg || flags.trabajo || flags.since4 || flags.juntos){
+        const p1 = (flags.trabajo || flags.vnz || flags.arg)
+          ? "Tu mamá y yo trabajamos muchísimo para traerte de Venezuela a Argentina y darte una vida mejor."
+          : "";
+        const p2 = (flags.since4 || flags.juntos)
+          ? "Desde que tenías 4 años caminamos juntos y no nos separamos."
+          : "";
+        line3 = [p1, p2].filter(Boolean).join(" ");
+      }
+
+      let line4 = "";
+      if (flags.austin){
+        line4 = "Y todavía me acuerdo cuando de chiquita decías que Austin Moon iba contigo en el carro… y yo, en broma, lo mandaba a bajarse y lo corría de la casa 🤣.";
+      }
+
+      const close = includeFinal ? FINAL_LINE : "";
+
+      return squeezeSpaces([opener, line1, line2, line3, line4, close].filter(Boolean).join(" "));
+    }
+
+    function updatePreview(){
+      messageEl.textContent = buildParagraph(false);
+    }
+
     function buildFinalMessage(){
-      const parts = picked.map(p => p.text);
-      const hasSince4 = parts.some(t => t.toLowerCase().includes("4"));
-      const hasTogether = parts.some(t => t.toLowerCase().includes("no nos separamos") || t.toLowerCase().includes("caminamos juntos"));
-      const hasVnz = parts.some(t => t.toLowerCase().includes("venezuela"));
-      const hasArg = parts.some(t => t.toLowerCase().includes("argentina"));
-      const intro = "Isabella, mi princesita… ";
-
-      const core = parts.length ? parts.join(". ") + "." : "Quería decirte algo con todo mi corazón.";
-
-      const bridge = [
-        hasVnz && hasArg ? "" : " Tu mamá y yo trabajamos muchísimo para traerte de Venezuela a Argentina y darte una vida mejor.",
-        hasSince4 ? "" : " Desde que tenías 4 años,",
-        hasTogether ? "" : " caminamos juntos y no nos separamos."
-      ].join(" ").replace(/\s+/g," ").trim();
-
-      return `${intro}${core} ${bridge} ${FINAL_LINE}`.replace(/\s+/g," ").trim();
+      return buildParagraph(true);
     }
 
     function showFinal(){
@@ -685,6 +795,7 @@
     btnFinal.disabled = true;
     btnFinal.style.display = "none";
     renderButtons();
+    updatePreview();
     burstHearts(6);
     setTimeout(()=>{ try{ showBubble('Holaaa, soy Isabella y tengo 15 😄💗'); }catch(e){} }, 450);
     selfTest();
